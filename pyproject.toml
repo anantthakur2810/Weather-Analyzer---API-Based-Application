@@ -1,0 +1,17 @@
+[project]
+name = "weather-analyzer"
+version = "0.2.0"
+description = "Web-based weather analyzer that fetches and presents live weather insights."
+readme = "README.md"
+requires-python = ">=3.10"
+authors = [
+  { name = "OpenAI Codex" }
+]
+
+[project.scripts]
+weather-analyzer = "weather_analyzer.web:main"
+weather-analyzer-cli = "weather_analyzer.cli:main"
+
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
