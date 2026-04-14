@@ -1,12 +1,3 @@
-"""Weather Analyzer package."""
+"""Weather Analyzer backend package."""
 
-__all__ = [
-    "api",
-    "cli",
-    "config",
-    "insights",
-    "models",
-    "storage",
-    "suggestions",
-    "web",
-]
+__version__ = "0.3.0"

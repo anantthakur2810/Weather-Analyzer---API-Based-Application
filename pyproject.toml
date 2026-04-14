@@ -1,12 +1,9 @@
 [project]
 name = "weather-analyzer"
-version = "0.2.0"
-description = "Web-based weather analyzer that fetches and presents live weather insights."
+version = "0.3.0"
+description = "Weather dashboard backend with OpenWeather integration and local search history."
 readme = "README.md"
 requires-python = ">=3.10"
-authors = [
-  { name = "OpenAI Codex" }
-]
 
 [project.scripts]
 weather-analyzer = "weather_analyzer.web:main"

@@ -2,6 +2,7 @@
   "name": "weather-analyzer",
   "private": true,
   "version": "0.3.0",
+  "description": "Weather dashboard with a React frontend and Python backend.",
   "type": "module",
   "scripts": {
     "dev": "concurrently \"npm:dev:api\" \"npm:dev:web\"",
@@ -11,12 +12,12 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "react": "latest",
-    "react-dom": "latest"
+    "react": "^19.2.4",
+    "react-dom": "^19.2.4"
   },
   "devDependencies": {
-    "@vitejs/plugin-react": "latest",
-    "concurrently": "latest",
-    "vite": "latest"
+    "@vitejs/plugin-react": "^6.0.1",
+    "concurrently": "^9.2.1",
+    "vite": "^8.0.3"
   }
 }
