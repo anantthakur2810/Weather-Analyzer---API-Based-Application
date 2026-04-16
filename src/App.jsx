@@ -43,6 +43,7 @@ export default function App() {
   const [history, setHistory] = useState([])
   const [suggestions, setSuggestions] = useState([])
   const [loading, setLoading] = useState(false)
+  const [clearingHistory, setClearingHistory] = useState(false)
 
   useEffect(() => {
     async function loadHistory() {
@@ -106,6 +107,35 @@ export default function App() {
   function handleSubmit(event) {
     event.preventDefault()
     runSearch(city)
+  }
+
+  async function handleClearHistory() {
+    if (history.length === 0) {
+      return
+    }
+
+    setClearingHistory(true)
+    try {
+      const response = await fetch('/api/history', { method: 'DELETE' })
+      const data = await response.json()
+
+      if (!response.ok) {
+        throw new Error(data.error || 'Unable to clear history right now.')
+      }
+
+      startTransition(() => {
+        setHistory(data.history || [])
+        setStatus({ text: 'Search history cleared.', error: false })
+      })
+    } catch (error) {
+      startTransition(() => {
+        setStatus({ text: error.message || 'Unable to clear history right now.', error: true })
+      })
+    } finally {
+      startTransition(() => {
+        setClearingHistory(false)
+      })
+    }
   }
 
   return (
@@ -200,6 +230,14 @@ export default function App() {
                 <p className="panel-kicker">Saved Activity</p>
                 <h2>Recent Checks</h2>
               </div>
+              <button
+                type="button"
+                className="secondary-button"
+                onClick={handleClearHistory}
+                disabled={history.length === 0 || clearingHistory}
+              >
+                {clearingHistory ? 'Clearing...' : 'Clear History'}
+              </button>
             </div>
             <p className="history-copy">Each successful search is stored locally so you can revisit it quickly.</p>
             <div className="history-list">

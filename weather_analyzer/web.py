@@ -64,6 +64,10 @@ class WeatherWebApplication:
     def get_history(self, limit: int = 10) -> dict[str, object]:
         return {"history": self.history.list_recent(limit=limit)}
 
+    def clear_history(self) -> dict[str, object]:
+        self.history.clear_history()
+        return {"history": []}
+
     def suggest_cities(self, query: str) -> list[str]:
         return suggest_city_names(query, history_candidates=self.history.known_city_names())
 
@@ -86,6 +90,13 @@ class WeatherRequestHandler(BaseHTTPRequestHandler):
             self._handle_history(parsed)
             return
         self._serve_frontend(parsed.path)
+
+    def do_DELETE(self) -> None:
+        parsed = urlparse(self.path)
+        if parsed.path == "/api/history":
+            self._send_json(HTTPStatus.OK, self.server.app.clear_history())
+            return
+        self._send_plaintext(HTTPStatus.NOT_FOUND, "Endpoint not found.")
 
     def _handle_weather(self, parsed) -> None:
         query = parse_qs(parsed.query).get("city", [""])[0].strip()

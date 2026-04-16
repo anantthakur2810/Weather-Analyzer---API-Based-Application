@@ -115,3 +115,8 @@ class HistoryStore:
                 (safe_limit,),
             ).fetchall()
         return [row["resolved_name"] for row in rows]
+
+    def clear_history(self) -> None:
+        with closing(self._connect()) as connection:
+            connection.execute("DELETE FROM weather_checks")
+            connection.commit()

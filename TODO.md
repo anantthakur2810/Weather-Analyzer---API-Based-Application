@@ -1,0 +1,1 @@
+# GitHub Pages Deploy TODO&#10;- [ ] Update vite.config.js (add base path)&#10;- [ ] Create .github/workflows/deploy.yml&#10;- [ ] npm run build&#10;- [ ] git add/commit/push&#10;- [ ] Verify site live
