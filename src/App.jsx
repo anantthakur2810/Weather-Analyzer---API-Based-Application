@@ -1,6 +1,11 @@
 import { startTransition, useEffect, useState } from 'react'
 
 const initialWeather = null
+const API_BASE_URL = String(import.meta.env.VITE_API_BASE_URL || '').replace(/\/$/, '')
+
+function apiUrl(path) {
+  return `${API_BASE_URL}${path}`
+}
 
 function formatDateTime(value) {
   return String(value).replace('T', ' ')
@@ -48,7 +53,7 @@ export default function App() {
   useEffect(() => {
     async function loadHistory() {
       try {
-        const response = await fetch('/api/history?limit=12')
+        const response = await fetch(apiUrl('/api/history?limit=12'))
         const data = await response.json()
         startTransition(() => {
           setHistory(data.history || [])
@@ -76,7 +81,7 @@ export default function App() {
     setStatus({ text: `Loading live weather for ${trimmedCity}...`, error: false })
 
     try {
-      const response = await fetch(`/api/weather?city=${encodeURIComponent(trimmedCity)}`)
+      const response = await fetch(apiUrl(`/api/weather?city=${encodeURIComponent(trimmedCity)}`))
       const data = await response.json()
 
       if (!response.ok) {
@@ -116,7 +121,7 @@ export default function App() {
 
     setClearingHistory(true)
     try {
-      const response = await fetch('/api/history', { method: 'DELETE' })
+      const response = await fetch(apiUrl('/api/history'), { method: 'DELETE' })
       const data = await response.json()
 
       if (!response.ok) {

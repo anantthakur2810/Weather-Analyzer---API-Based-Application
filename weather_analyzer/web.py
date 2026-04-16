@@ -5,6 +5,7 @@ from http import HTTPStatus
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 import json
 import mimetypes
+import os
 from pathlib import Path
 from urllib.parse import parse_qs, urlparse
 
@@ -16,6 +17,7 @@ from weather_analyzer.suggestions import suggest_city_names
 
 ROOT_DIR = Path(__file__).resolve().parent.parent
 DIST_DIR = ROOT_DIR / "dist"
+CORS_ALLOW_ORIGIN = os.getenv("CORS_ALLOW_ORIGIN", "*")
 
 
 def serialize_report(report) -> dict[str, object]:
@@ -98,6 +100,15 @@ class WeatherRequestHandler(BaseHTTPRequestHandler):
             return
         self._send_plaintext(HTTPStatus.NOT_FOUND, "Endpoint not found.")
 
+    def do_OPTIONS(self) -> None:
+        parsed = urlparse(self.path)
+        if parsed.path.startswith("/api/"):
+            self.send_response(HTTPStatus.NO_CONTENT)
+            self._send_cors_headers()
+            self.end_headers()
+            return
+        self._send_plaintext(HTTPStatus.NOT_FOUND, "Endpoint not found.")
+
     def _handle_weather(self, parsed) -> None:
         query = parse_qs(parsed.query).get("city", [""])[0].strip()
         if not query:
@@ -156,6 +167,7 @@ class WeatherRequestHandler(BaseHTTPRequestHandler):
     def _send_json(self, status: HTTPStatus, payload: dict[str, object]) -> None:
         body = json.dumps(payload).encode("utf-8")
         self.send_response(status)
+        self._send_cors_headers()
         self.send_header("Content-Type", "application/json; charset=utf-8")
         self.send_header("Content-Length", str(len(body)))
         self.end_headers()
@@ -164,10 +176,16 @@ class WeatherRequestHandler(BaseHTTPRequestHandler):
     def _send_plaintext(self, status: HTTPStatus, message: str) -> None:
         body = message.encode("utf-8")
         self.send_response(status)
+        self._send_cors_headers()
         self.send_header("Content-Type", "text/plain; charset=utf-8")
         self.send_header("Content-Length", str(len(body)))
         self.end_headers()
         self.wfile.write(body)
+
+    def _send_cors_headers(self) -> None:
+        self.send_header("Access-Control-Allow-Origin", CORS_ALLOW_ORIGIN)
+        self.send_header("Access-Control-Allow-Methods", "GET, DELETE, OPTIONS")
+        self.send_header("Access-Control-Allow-Headers", "Content-Type")
 
     def log_message(self, format: str, *args) -> None:
         return
